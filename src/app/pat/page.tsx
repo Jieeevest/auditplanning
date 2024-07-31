@@ -1,8 +1,7 @@
-import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,18 +10,44 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import useProjectOverview from "../../../data/useProjectOverview";
+import {
+  Params,
+  ProjectOverview,
+  UseProjectOverviewResponse,
+} from "@/helpers/types";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Overview() {
+  const router = useRouter();
+  const [params, setParams] = useState<Params>({
+    project_name: "",
+    status_approver: undefined,
+    status_pat: undefined,
+    // year: new Date().getFullYear(),
+    year: "",
+    sort_by: "ASC",
+    limit: 16,
+    page: 1,
+  });
+  const {
+    projectOverview,
+    projectOverviewMutate,
+    projectOverviewError,
+  }: UseProjectOverviewResponse = useProjectOverview(params);
+
+  const handleClick = (id: number) => {
+    router.push(`/pat/${id}/overview`);
+  };
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -31,13 +56,13 @@ export default function Overview() {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">Home</Link>
+                  <Link href="/dashboard">Home</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="#">P.A.T</Link>
+                  <Link href="/pat">P.A.T</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -52,278 +77,45 @@ export default function Overview() {
             <h5 className="text-2xl font-bold">Pustaka Rencana Audit</h5>
           </div>
           <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-            <Card
-              x-chunk="dashboard-01-chunk-0"
-              className="min-h-[14rem] shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Medan 1</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Medan
-                </p>
-                <Progress
-                  value={50}
-                  aria-label="25% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>On Progress</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-1"
-              className="shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Semarang</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Semarang
-                </p>
-                <Progress
-                  value={100}
-                  aria-label="25% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>Final</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-2"
-              className="shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Sales</CardTitle> */}
-                {/* <CreditCard className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Bandung</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Bandung
-                </p>
-                <Progress
-                  value={25}
-                  aria-label="25% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>On Progress</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-3"
-              className="shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Jad</CardTitle> */}
-                {/* <Activity className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Jakarta</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Jakarta
-                </p>
-                <Progress
-                  value={75}
-                  aria-label="25% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>On Progress</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-0"
-              className="shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Jayapura</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Jayapura
-                </p>
-                <Progress
-                  value={100}
-                  aria-label="25% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>Final</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-1"
-              className="min-h-[14rem] shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Pontianak</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Pontianak
-                </p>
-                <Progress
-                  value={75}
-                  aria-label="25% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>On Progress</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-2"
-              className="shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Sales</CardTitle> */}
-                {/* <CreditCard className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Surabaya</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Surabaya
-                </p>
-                <Progress
-                  value={50}
-                  aria-label="25% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>On Progress</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-            <Card
-              x-chunk="dashboard-01-chunk-3"
-              className="shadow-md hover:bg-slate-100 hover:cursor-pointer"
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                {/* <CardTitle className="text-sm font-medium">Jad</CardTitle> */}
-                {/* <Activity className="h-4 w-4 text-muted-foreground" /> */}
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">P.A.T RAO Aceh</div>
-                <p className="text-xs text-muted-foreground mb-5">
-                  Perencanaan Audit RAO Aceh
-                </p>
-                <Progress
-                  value={100}
-                  aria-label="100% increase"
-                  className="border-2 border-slate-600s"
-                />
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Periode</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>2024</TableCell>
-                      <TableCell>Final</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            {projectOverview?.data?.map((item) => (
+              <Card
+                key={item?.id}
+                x-chunk={`dashboard-01-chunk-${item.id}`}
+                className="shadow-md hover:bg-slate-100 hover:cursor-pointer"
+                onClick={() => handleClick(item?.id)}
+              >
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  {/* Add CardTitle and icons if needed */}
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {item?.pat_name + " " + item?.tahun}
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-5">
+                    [{item?.uka_name}] - Perencanaan Audit
+                  </p>
+                  <Progress
+                    value={item?.status_pat == "On Progress" ? 50 : 100} // Adjust this if needed
+                    aria-label={`${item.status_pat} progress`}
+                    className="border-2 border-slate-600s"
+                  />
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Periode</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>{item?.tahun}</TableCell>
+                        <TableCell>{item?.status_pat}</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </main>
       </div>
